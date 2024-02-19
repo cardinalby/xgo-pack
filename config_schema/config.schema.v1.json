@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/cardinalby/xgo-pack/pkg/pipeline/config/types/config",
+  "$ref": "#/$defs/Config",
+  "$defs": {
+    "Config": {
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "Used for JSON schema"
+        },
+        "preset": {
+          "type": "string",
+          "description": "Preset is a name of a preset config that will be used as a base for the config"
+        },
+        "root": {
+          "type": "string",
+          "description": "Root path of the project. Absolute or relative to working directory."
+        },
+        "dist_dir": {
+          "type": "string",
+          "description": "DistDir is path (relative to root) of a directory for final build artifacts.\nIf not set, \"dist\" dir will be used"
+        },
+        "tmp_dir": {
+          "type": "string",
+          "description": "TmpDir is path (relative to root) of a temp directory for temporary build artifacts. If not set, a temporary\ndirectory will be created in DistDir"
+        },
+        "src": {
+          "$ref": "#/$defs/Source",
+          "description": "Src sets paths of source files and an icon"
+        },
+        "xgo": {
+          "$ref": "#/$defs/XGoConfig",
+          "description": "XGoConfig is a config for xgo tool"
+        },
+        "targets": {
+          "$ref": "#/$defs/Targets",
+          "description": "Targets is a config for building targets"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Source": {
+      "properties": {
+        "main_pkg": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon is a relative path to the icon file. It will be converted to needed formats via imagemagick,\nso for psd files you can use icon.psd[0] to convert all layers"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetBuildConfig": {
+      "properties": {
+        "race": {
+          "type": "boolean",
+          "description": "Enable data race detection (supported only on amd64)"
+        },
+        "tags": {
+          "type": "string",
+          "description": "List of build tags to consider satisfied during the build"
+        },
+        "ldflags": {
+          "type": "string",
+          "description": "Arguments to pass on each go tool link invocation"
+        },
+        "mode": {
+          "type": "string",
+          "description": "Indicates which kind of object file to build"
+        },
+        "vcs": {
+          "type": "string",
+          "description": "Whether to stamp binaries with version control information"
+        },
+        "trimpath": {
+          "type": "boolean",
+          "description": "Remove all file system paths from the resulting executable"
+        },
+        "cross_args": {
+          "type": "string",
+          "description": "CGO dependency configure arguments"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetLinux": {
+      "properties": {
+        "common": {
+          "$ref": "#/$defs/TargetsCommon",
+          "description": "Common will be used as defaults for all architectures"
+        },
+        "arm64": {
+          "$ref": "#/$defs/TargetLinuxArch"
+        },
+        "amd64": {
+          "$ref": "#/$defs/TargetLinuxArch"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetLinuxArch": {
+      "properties": {
+        "out_dir": {
+          "type": "string",
+          "description": "Bin is a path of the target binary file relative to Config.DistDir.\nOutDir is a path relative to Config.DistDir where the final artifacts will be placed\nIf not set, \"linux_[arch]\" will be used"
+        },
+        "bin": {
+          "type": "string",
+          "description": "Bin is a path of the target binary file relative to OutDir.\nIf empty, the binary will not be built"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetMacos": {
+      "properties": {
+        "common": {
+          "$ref": "#/$defs/TargetsCommon",
+          "description": "Common will be used as defaults for all architectures"
+        },
+        "hide_in_dock": {
+          "type": "boolean",
+          "description": "HideInDock sets the plist flag in the app bundle to hide the app in the dock"
+        },
+        "arm64": {
+          "$ref": "#/$defs/TargetMacosArch"
+        },
+        "amd64": {
+          "$ref": "#/$defs/TargetMacosArch"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetMacosArch": {
+      "properties": {
+        "out_dir": {
+          "type": "string",
+          "description": "OutDir is a path relative to Config.DistDir where the final artifacts will be placed\nIf not set, \"macos_[arch]\" will be used"
+        },
+        "bin": {
+          "type": "string",
+          "description": "Bin is a path of the target binary file relative to OutDir.\nIf empty, the binary will be built only in case it's required to build bundle or dmg.\nTemporary path will be used in this case.\nIf you want to keep the binary, you should specify the path."
+        },
+        "bundle": {
+          "type": "string",
+          "description": "Bundle is a path of the target app bundle relative to TargetMacosArch.OutDir.\nIf empty, the bundle will be created only in case it's required to build dmg.\nTemporary path will be used in this case.\nIf you want to keep the bundle, you should specify the path."
+        },
+        "dmg": {
+          "$ref": "#/$defs/TargetMacosDmg",
+          "description": "Dmg is a path of the target dmg file relative to OutDir.\nIf empty, the dmg will not be created"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetMacosDmg": {
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path is a path of the target dmg image relative to TargetMacosArch.OutDir.\nIf empty, dmg will not be created."
+        },
+        "add_applications_symlink": {
+          "type": "boolean",
+          "description": "AddApplicationsSymlink is a flag to add a symlink to the /Applications folder in the dmg"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetWindows": {
+      "properties": {
+        "common": {
+          "$ref": "#/$defs/TargetsCommon",
+          "description": "Common will be used as defaults for all architectures"
+        },
+        "syso_file": {
+          "type": "string",
+          "description": "SysoFile is an output path for the .syso file (containing manifest and icon) relative to Config.Root\nIf empty, a temporary file will be created in the main package\nIf you want to keep the file, you should specify the path."
+        },
+        "arm64": {
+          "$ref": "#/$defs/TargetWindowsArch"
+        },
+        "amd64": {
+          "$ref": "#/$defs/TargetWindowsArch"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetWindowsArch": {
+      "properties": {
+        "out_dir": {
+          "type": "string",
+          "description": "OutDir is a path relative to Config.DistDir where the final artifacts will be placed\nIf not set, \"windows_[arch]\" will be used"
+        },
+        "bin": {
+          "type": "string",
+          "description": "Bin is a path of the target binary file relative to OutDir.\nIf empty, the binary will not be built"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Targets": {
+      "properties": {
+        "common": {
+          "$ref": "#/$defs/TargetsCommon",
+          "description": "Common will be used as defaults for all other targets"
+        },
+        "windows": {
+          "$ref": "#/$defs/TargetWindows"
+        },
+        "macos": {
+          "$ref": "#/$defs/TargetMacos"
+        },
+        "linux": {
+          "$ref": "#/$defs/TargetLinux"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetsCommon": {
+      "properties": {
+        "bin_name": {
+          "type": "string",
+          "description": "BinName is the name of the desired binary file without an extension. For Windows, it will be .exe"
+        },
+        "product_name": {
+          "type": "string",
+          "description": "ProductName is a human-readable name of the product. Is used in MacOS app bundle, dmg and Windows manifest"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version is a version of the app. It's used in MacOS app bundle and Windows manifest"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Identifier is a unique identifier for the app (used in MacOS bundle plist and Windows manifest),\nusually in reverse domain notation e.g. com.example.myapp"
+        },
+        "copyright": {
+          "type": "string",
+          "description": "Copyright is a copyright string (used in MacOS bundle plist)"
+        },
+        "high_dpi": {
+          "type": "boolean",
+          "description": "HighDpi is a flag to enable high dpi support on Windows and MacOS"
+        },
+        "go_build": {
+          "$ref": "#/$defs/TargetBuildConfig"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "XGoConfig": {
+      "properties": {
+        "go_version": {
+          "type": "string",
+          "description": "Go release to use for cross compilation (flag: go)"
+        },
+        "go_proxy": {
+          "type": "string",
+          "description": "Set a Global Proxy for Go Modules"
+        },
+        "verbose": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  }
+}
