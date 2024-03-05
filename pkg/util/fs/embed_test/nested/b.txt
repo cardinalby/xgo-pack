@@ -1,0 +1,13 @@
+package nested
+
+import (
+	"io/fs"
+	"os"
+)
+
+func CopyFsTo(fs fs.FS, destDir string) error {
+	if err := os.MkdirAll(destDir, 0755); err != nil {
+		return err
+	}
+
+}

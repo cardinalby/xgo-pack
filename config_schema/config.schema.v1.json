@@ -1,54 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/cardinalby/xgo-pack/pkg/pipeline/config/types/config",
-  "$ref": "#/$defs/Config",
+  "$id": "https://raw.githubusercontent.com/cardinalby/xgo-pack/master/config_schema/config.schema.v1.json",
   "$defs": {
-    "Config": {
-      "properties": {
-        "$schema": {
-          "type": "string",
-          "description": "Used for JSON schema"
-        },
-        "preset": {
-          "type": "string",
-          "description": "Preset is a name of a preset config that will be used as a base for the config"
-        },
-        "root": {
-          "type": "string",
-          "description": "Root path of the project. Absolute or relative to working directory."
-        },
-        "dist_dir": {
-          "type": "string",
-          "description": "DistDir is path (relative to root) of a directory for final build artifacts.\nIf not set, \"dist\" dir will be used"
-        },
-        "tmp_dir": {
-          "type": "string",
-          "description": "TmpDir is path (relative to root) of a temp directory for temporary build artifacts. If not set, a temporary\ndirectory will be created in DistDir"
-        },
-        "src": {
-          "$ref": "#/$defs/Source",
-          "description": "Src sets paths of source files and an icon"
-        },
-        "xgo": {
-          "$ref": "#/$defs/XGoConfig",
-          "description": "XGoConfig is a config for xgo tool"
-        },
-        "targets": {
-          "$ref": "#/$defs/Targets",
-          "description": "Targets is a config for building targets"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "Source": {
+    "Src": {
       "properties": {
         "main_pkg": {
           "type": "string"
         },
         "icon": {
           "type": "string",
-          "description": "Icon is a relative path to the icon file. It will be converted to needed formats via imagemagick,\nso for psd files you can use icon.psd[0] to convert all layers"
+          "description": "Icon is a path to the icon file relative to Root. It will be converted to needed formats via imagemagick,\nso for psd files you can use icon.psd[0] to convert all layers"
         }
       },
       "additionalProperties": false,
@@ -91,7 +52,7 @@
     "TargetLinux": {
       "properties": {
         "common": {
-          "$ref": "#/$defs/TargetsCommon",
+          "$ref": "#/$defs/TargetLinuxCommon",
           "description": "Common will be used as defaults for all architectures"
         },
         "arm64": {
@@ -108,11 +69,140 @@
       "properties": {
         "out_dir": {
           "type": "string",
-          "description": "Bin is a path of the target binary file relative to Config.DistDir.\nOutDir is a path relative to Config.DistDir where the final artifacts will be placed\nIf not set, \"linux_[arch]\" will be used"
+          "description": "OutDir is a path relative to Config.DistDir where the final artifacts will be placed\nIf not set, \"linux_[arch]\" will be used"
         },
-        "bin": {
+        "build_bin": {
+          "type": "boolean",
+          "description": "Defines if binary should be built\nIf empty, the binary will be created only if it's needed for deb package"
+        },
+        "build_deb": {
+          "type": "boolean",
+          "description": "Defines if deb package should be built\nIf empty, the deb package will not be created"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetLinuxCommon": {
+      "properties": {
+        "product_name": {
           "type": "string",
-          "description": "Bin is a path of the target binary file relative to OutDir.\nIf empty, the binary will not be built"
+          "description": "ProductName is a human-readable name of the product. Is used in MacOS app bundle, dmg and Windows manifest\nIf not set, the last part of module name will be used"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version is a version of the app. It's used in MacOS app bundle and Windows manifest\nIf not set, \"1.0.0\" will be used"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Identifier is a unique identifier for the app (used in MacOS bundle plist and Windows manifest),\nusually in reverse domain notation e.g. com.example.myapp\nIf not set, the reversed module name will be used"
+        },
+        "copyright": {
+          "type": "string",
+          "description": "Copyright is a copyright string (used in MacOS bundle plist and deb package)\nIf not set, the \"© [current_year], [identifier without the last part]\" will be used"
+        },
+        "high_dpi": {
+          "type": "boolean",
+          "description": "HighDpi is a flag to enable high dpi support on Windows and MacOS"
+        },
+        "go_build": {
+          "$ref": "#/$defs/TargetBuildConfig",
+          "description": "Arguments of go build command"
+        },
+        "bin_name": {
+          "type": "string",
+          "description": "The name of the resulting binary file. For Windows '.exe' extension will be added automatically\nIf not set, the last part of the main package path will be used"
+        },
+        "deb": {
+          "$ref": "#/$defs/TargetLinuxDeb",
+          "description": "Deb is a config for deb package"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetLinuxDeb": {
+      "properties": {
+        "deb_name": {
+          "type": "string",
+          "description": "Name of the resulting deb package file relative to arch `out_dir`\nIf empty, [common.product_name].deb will be used"
+        },
+        "custom_nfpm_config": {
+          "type": "string",
+          "description": "Path to custom nfpm config relative to the root.\nIf set, all other fields will be ignored and nfpm will be used with this config\nand \"XGO_PACK_\" env variables that can be used in config fields as placeholders:\n${XGO_PACK_DASHED_PRODUCT_NAME}, ${XGO_PACK_ARCH}, ${XGO_PACK_VERSION}"
+        },
+        "name": {
+          "type": "string",
+          "description": "If empty, common.ProductName will be used.\nFor allowed format see https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-source\nThe string will be lower-cased and not supported symbols will be replaced with '-'"
+        },
+        "section": {
+          "type": "string",
+          "description": "If empty, \"default\" will be used"
+        },
+        "maintainer": {
+          "type": "string",
+          "description": "Recommended to be filled. If empty common.identifier without last part will be used"
+        },
+        "description": {
+          "type": "string"
+        },
+        "vendor": {
+          "type": "string"
+        },
+        "homepage": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "contents": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object",
+          "description": "Additional files to include to the package (local path -\u003e destination abs path)"
+        },
+        "dst_bin_path": {
+          "type": "string",
+          "description": "Destination path for bin file in the package (as absolute path in the dest system)\nIf empty, \"/usr/bin/{common.bin_name}\" will be used"
+        },
+        "desktop_entry": {
+          "$ref": "#/$defs/TargetLinuxDebDesktopEntry",
+          "description": "desktop entry file options"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetLinuxDebDesktopEntry": {
+      "properties": {
+        "add_desktop_entry": {
+          "type": "boolean",
+          "description": "Defines if desktop entry should be added to the package\nIf empty, `true` will be used"
+        },
+        "add_icon": {
+          "type": "boolean",
+          "description": "Defines if icon should be added to the package\nIf empty, `true` will be used (only if add_desktop_entry is true)"
+        },
+        "dst_icon_path": {
+          "type": "string",
+          "description": "If empty, \"/usr/share/icons/[common.identifierProductName].png\" will be used"
+        },
+        "name": {
+          "type": "string",
+          "description": "Desktop entry name.\nIf empty, common.product_name will be used"
+        },
+        "type": {
+          "type": "string",
+          "description": "Desktop entry type. If empty, \"Application\" will be used"
+        },
+        "terminal": {
+          "type": "boolean",
+          "description": "Desktop entry Terminal key.\nIf empty, `true` will be used"
+        },
+        "no_display": {
+          "type": "boolean",
+          "description": "Desktop entry NoDisplay key.\nIf empty, `false` will be used"
         }
       },
       "additionalProperties": false,
@@ -121,12 +211,8 @@
     "TargetMacos": {
       "properties": {
         "common": {
-          "$ref": "#/$defs/TargetsCommon",
-          "description": "Common will be used as defaults for all architectures"
-        },
-        "hide_in_dock": {
-          "type": "boolean",
-          "description": "HideInDock sets the plist flag in the app bundle to hide the app in the dock"
+          "$ref": "#/$defs/TargetMacosCommon",
+          "description": "Will be used as defaults for all architectures"
         },
         "arm64": {
           "$ref": "#/$defs/TargetMacosArch"
@@ -144,27 +230,82 @@
           "type": "string",
           "description": "OutDir is a path relative to Config.DistDir where the final artifacts will be placed\nIf not set, \"macos_[arch]\" will be used"
         },
-        "bin": {
-          "type": "string",
-          "description": "Bin is a path of the target binary file relative to OutDir.\nIf empty, the binary will be built only in case it's required to build bundle or dmg.\nTemporary path will be used in this case.\nIf you want to keep the binary, you should specify the path."
+        "build_bin": {
+          "type": "boolean",
+          "description": "Defines if binary should be built.\nIf false, the binary will be built only in case it's required to build bundle or dmg.\nTemporary path will be used in this case."
         },
-        "bundle": {
-          "type": "string",
-          "description": "Bundle is a path of the target app bundle relative to TargetMacosArch.OutDir.\nIf empty, the bundle will be created only in case it's required to build dmg.\nTemporary path will be used in this case.\nIf you want to keep the bundle, you should specify the path."
+        "build_bundle": {
+          "type": "boolean",
+          "description": "Defines if app bundle should be built.\nIf false, the bundle will be created only in case it's required to build dmg.\nTemporary path will be used in this case."
         },
-        "dmg": {
-          "$ref": "#/$defs/TargetMacosDmg",
-          "description": "Dmg is a path of the target dmg file relative to OutDir.\nIf empty, the dmg will not be created"
+        "build_dmg": {
+          "type": "boolean",
+          "description": "Defines if dmg should be built.\nIf empty, the dmg will not be created"
         }
       },
       "additionalProperties": false,
       "type": "object"
     },
-    "TargetMacosDmg": {
+    "TargetMacosCommon": {
       "properties": {
-        "path": {
+        "product_name": {
           "type": "string",
-          "description": "Path is a path of the target dmg image relative to TargetMacosArch.OutDir.\nIf empty, dmg will not be created."
+          "description": "ProductName is a human-readable name of the product. Is used in MacOS app bundle, dmg and Windows manifest\nIf not set, the last part of module name will be used"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version is a version of the app. It's used in MacOS app bundle and Windows manifest\nIf not set, \"1.0.0\" will be used"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Identifier is a unique identifier for the app (used in MacOS bundle plist and Windows manifest),\nusually in reverse domain notation e.g. com.example.myapp\nIf not set, the reversed module name will be used"
+        },
+        "copyright": {
+          "type": "string",
+          "description": "Copyright is a copyright string (used in MacOS bundle plist and deb package)\nIf not set, the \"© [current_year], [identifier without the last part]\" will be used"
+        },
+        "high_dpi": {
+          "type": "boolean",
+          "description": "HighDpi is a flag to enable high dpi support on Windows and MacOS"
+        },
+        "go_build": {
+          "$ref": "#/$defs/TargetBuildConfig",
+          "description": "Arguments of go build command"
+        },
+        "bin_name": {
+          "type": "string",
+          "description": "The name of the resulting binary file. For Windows '.exe' extension will be added automatically\nIf not set, the last part of the main package path will be used"
+        },
+        "bundle": {
+          "$ref": "#/$defs/TargetMacosCommonBundle"
+        },
+        "dmg": {
+          "$ref": "#/$defs/TargetMacosCommonDmg"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetMacosCommonBundle": {
+      "properties": {
+        "bundle_name": {
+          "type": "string",
+          "description": "BundleName is a name of the resulting app bundle relative to TargetMacosArch.OutDir.\nIf empty, \"[targets.common.product_name].app\" will be used"
+        },
+        "hide_in_dock": {
+          "type": "boolean",
+          "description": "HideInDock sets the plist flag in the app bundle to hide the app in dock"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "TargetMacosCommonBundle is an arches common settings for MacOS bundle"
+    },
+    "TargetMacosCommonDmg": {
+      "properties": {
+        "dmg_name": {
+          "type": "string",
+          "description": "DmgName is a name of the resulting dmg file relative to TargetMacosArch.OutDir.\nIf empty, \"[targets.common.product_name].dmg\" will be used"
         },
         "add_applications_symlink": {
           "type": "boolean",
@@ -172,20 +313,14 @@
         }
       },
       "additionalProperties": false,
-      "type": "object"
+      "type": "object",
+      "description": "TargetMacosCommonDmg is an arches common settings for MacOS dmg"
     },
     "TargetWindows": {
       "properties": {
         "common": {
-          "$ref": "#/$defs/TargetsCommon",
+          "$ref": "#/$defs/TargetWindowsCommon",
           "description": "Common will be used as defaults for all architectures"
-        },
-        "syso_file": {
-          "type": "string",
-          "description": "SysoFile is an output path for the .syso file (containing manifest and icon) relative to Config.Root\nIf empty, a temporary file will be created in the main package\nIf you want to keep the file, you should specify the path."
-        },
-        "arm64": {
-          "$ref": "#/$defs/TargetWindowsArch"
         },
         "amd64": {
           "$ref": "#/$defs/TargetWindowsArch"
@@ -200,9 +335,47 @@
           "type": "string",
           "description": "OutDir is a path relative to Config.DistDir where the final artifacts will be placed\nIf not set, \"windows_[arch]\" will be used"
         },
-        "bin": {
+        "build_syso": {
+          "type": "boolean",
+          "description": "BuildSyso defines if .syso file should be built.\nIf false, the .syso file will be built only in case it's required to build binary\nTemporary path will be used in this case.\nTo keep the .syso file, set it to true"
+        },
+        "build_bin": {
+          "type": "boolean",
+          "description": "Defines if binary should be built"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetWindowsCommon": {
+      "properties": {
+        "product_name": {
           "type": "string",
-          "description": "Bin is a path of the target binary file relative to OutDir.\nIf empty, the binary will not be built"
+          "description": "ProductName is a human-readable name of the product. Is used in MacOS app bundle, dmg and Windows manifest\nIf not set, the last part of module name will be used"
+        },
+        "version": {
+          "type": "string",
+          "description": "Version is a version of the app. It's used in MacOS app bundle and Windows manifest\nIf not set, \"1.0.0\" will be used"
+        },
+        "identifier": {
+          "type": "string",
+          "description": "Identifier is a unique identifier for the app (used in MacOS bundle plist and Windows manifest),\nusually in reverse domain notation e.g. com.example.myapp\nIf not set, the reversed module name will be used"
+        },
+        "copyright": {
+          "type": "string",
+          "description": "Copyright is a copyright string (used in MacOS bundle plist and deb package)\nIf not set, the \"© [current_year], [identifier without the last part]\" will be used"
+        },
+        "high_dpi": {
+          "type": "boolean",
+          "description": "HighDpi is a flag to enable high dpi support on Windows and MacOS"
+        },
+        "go_build": {
+          "$ref": "#/$defs/TargetBuildConfig",
+          "description": "Arguments of go build command"
+        },
+        "bin_name": {
+          "type": "string",
+          "description": "The name of the resulting binary file. For Windows '.exe' extension will be added automatically\nIf not set, the last part of the main package path will be used"
         }
       },
       "additionalProperties": false,
@@ -229,32 +402,33 @@
     },
     "TargetsCommon": {
       "properties": {
-        "bin_name": {
-          "type": "string",
-          "description": "BinName is the name of the desired binary file without an extension. For Windows, it will be .exe"
-        },
         "product_name": {
           "type": "string",
-          "description": "ProductName is a human-readable name of the product. Is used in MacOS app bundle, dmg and Windows manifest"
+          "description": "ProductName is a human-readable name of the product. Is used in MacOS app bundle, dmg and Windows manifest\nIf not set, the last part of module name will be used"
         },
         "version": {
           "type": "string",
-          "description": "Version is a version of the app. It's used in MacOS app bundle and Windows manifest"
+          "description": "Version is a version of the app. It's used in MacOS app bundle and Windows manifest\nIf not set, \"1.0.0\" will be used"
         },
         "identifier": {
           "type": "string",
-          "description": "Identifier is a unique identifier for the app (used in MacOS bundle plist and Windows manifest),\nusually in reverse domain notation e.g. com.example.myapp"
+          "description": "Identifier is a unique identifier for the app (used in MacOS bundle plist and Windows manifest),\nusually in reverse domain notation e.g. com.example.myapp\nIf not set, the reversed module name will be used"
         },
         "copyright": {
           "type": "string",
-          "description": "Copyright is a copyright string (used in MacOS bundle plist)"
+          "description": "Copyright is a copyright string (used in MacOS bundle plist and deb package)\nIf not set, the \"© [current_year], [identifier without the last part]\" will be used"
         },
         "high_dpi": {
           "type": "boolean",
           "description": "HighDpi is a flag to enable high dpi support on Windows and MacOS"
         },
         "go_build": {
-          "$ref": "#/$defs/TargetBuildConfig"
+          "$ref": "#/$defs/TargetBuildConfig",
+          "description": "Arguments of go build command"
+        },
+        "bin_name": {
+          "type": "string",
+          "description": "The name of the resulting binary file. For Windows '.exe' extension will be added automatically\nIf not set, the last part of the main package path will be used"
         }
       },
       "additionalProperties": false,
@@ -277,5 +451,44 @@
       "additionalProperties": false,
       "type": "object"
     }
-  }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Used for JSON schema"
+    },
+    "presets": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array",
+      "description": "Presets is a preset config names list that will be used as a base for the config.\nPresets will be applied in the order of appearance in the list, so the last one will override the previous ones."
+    },
+    "root": {
+      "type": "string",
+      "description": "Root path of the project. Absolute or relative to working directory."
+    },
+    "dist_dir": {
+      "type": "string",
+      "description": "DistDir is path (relative to root) of a directory for final build artifacts.\nIf not set, \"dist\" dir will be used"
+    },
+    "tmp_dir": {
+      "type": "string",
+      "description": "TmpDir is path (relative to root) of a temp directory for temporary build artifacts. If not set, a temporary\ndirectory will be created in DistDir"
+    },
+    "src": {
+      "$ref": "#/$defs/Src",
+      "description": "Src sets paths of source files and an icon"
+    },
+    "xgo": {
+      "$ref": "#/$defs/XGoConfig",
+      "description": "XGoConfig is a config for xgo tool"
+    },
+    "targets": {
+      "$ref": "#/$defs/Targets",
+      "description": "Targets is a config for building targets"
+    }
+  },
+  "additionalProperties": false,
+  "type": "object"
 }
