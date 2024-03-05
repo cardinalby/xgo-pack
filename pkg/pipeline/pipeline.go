@@ -4,6 +4,7 @@ import (
 	"context"
 	"path/filepath"
 
+	"github.com/cardinalby/xgo-pack/pkg/consts"
 	"github.com/cardinalby/xgo-pack/pkg/platforms/linux/deb_pkg"
 	"github.com/cardinalby/xgo-pack/pkg/util/fs/fs_resource"
 	"golang.org/x/sync/errgroup"
@@ -42,6 +43,11 @@ func Start(
 			archCfg := archCfg
 			if archCfg.ShouldBuildBin() {
 				errGroup.Go(func() error {
+					if os == consts.OsWindows {
+						if _, err := buildCtx.Artifacts.Get(buildCtx, buildctx.WinSysoKind(arch)); err != nil {
+							return err
+						}
+					}
 					_, err := buildCtx.Artifacts.Get(buildCtx, buildctx.BinKind(os, arch))
 					return err
 				})
