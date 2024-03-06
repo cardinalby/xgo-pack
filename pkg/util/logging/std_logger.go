@@ -18,7 +18,7 @@ func NewLogger(writer io.Writer) Logger {
 }
 
 func (l *stdLogger) Print(v ...any) {
-	l.logger.Println(v)
+	l.logger.Println(v...)
 }
 
 func (l *stdLogger) Printf(format string, v ...any) {
@@ -26,7 +26,7 @@ func (l *stdLogger) Printf(format string, v ...any) {
 }
 
 func (l *stdLogger) Println(v ...any) {
-	l.logger.Println(v)
+	l.logger.Println(v...)
 }
 
 func (l *stdLogger) WithPrefix(prefix string) Logger {
