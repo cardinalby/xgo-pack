@@ -33,7 +33,8 @@ type XGoConfig struct {
 type Config struct {
 	XGoConfig XGoConfig
 	// Root of the project (where go.mod is located)
-	RootPath string
+	RootPath   string
+	BinTempDir string
 	// Relative path to the main package (from the root)
 	MainPkgRelPath string
 	// List of targets to build

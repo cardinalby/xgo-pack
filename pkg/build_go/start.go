@@ -18,12 +18,6 @@ func Start(
 	ctx buildctx.Context,
 	config config.Config,
 ) error {
-	binTmpDir, err := ctx.NewTempDir("xgo_bin")
-	if err != nil {
-		return fmt.Errorf("error creating temp dir path for xgo build: %w", err)
-	}
-	ctx.Artifacts.AddAnonymous(binTmpDir)
-
 	outBinPrefix := filepath.Base(config.MainPkgRelPath)
 
 	for target, tConfig := range config.Targets {
@@ -39,7 +33,7 @@ func Start(
 		args := xgolib.Args{
 			Repository: config.RootPath,
 			SrcPackage: config.MainPkgRelPath,
-			OutFolder:  binTmpDir.GetPath(),
+			OutFolder:  config.BinTempDir,
 			OutPrefix:  outBinPrefix,
 			Build:      buildArgs,
 			Targets:    []string{target.String()},
@@ -52,7 +46,7 @@ func Start(
 			return fmt.Errorf("error building '%s' target: %w", target.String(), err)
 		}
 
-		outBinPath := getXgoOutBinPath(binTmpDir.GetPath(), outBinPrefix, target)
+		outBinPath := getXgoOutBinPath(config.BinTempDir, outBinPrefix, target)
 		if err := fsutil.RenameFile(outBinPath, tConfig.OutBinPath); err != nil {
 			return fmt.Errorf(
 				"error moving xgo build result bin '%s' to '%s': %w. It may be a result of unsuccessful build",

@@ -22,6 +22,7 @@ type DisposableArtifact interface {
 type Kind string
 
 const (
+	KindBinTempDir                Kind = "bin_temp_dir"
 	KindIcon                      Kind = "icon"
 	KindDefaultPngIcon            Kind = "default_png_icon"
 	KindPngIcon                   Kind = "png_icon"

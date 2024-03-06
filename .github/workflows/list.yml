@@ -20,4 +20,4 @@ jobs:
 
       - env:
           GOPROXY: "proxy.golang.org"
-        run: go list -m github.com/cardinalby/go-struct-flags@${{ github.ref_name }}
+        run: go list -m github.com/cardinalby/xgo-pack@${{ github.ref_name }}

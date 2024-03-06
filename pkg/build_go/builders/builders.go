@@ -11,6 +11,14 @@ import (
 )
 
 func RegisterBuilders(ctx buildctx.Context) {
+	ctx.Artifacts.RegisterBuilder(buildctx.KindBinTempDir, func(ctx buildctx.Context) (buildctx.Artifact, error) {
+		binTmpDir, err := ctx.NewTempDir("xgo_bin")
+		if err != nil {
+			return nil, err
+		}
+		return &fs_resource.TempDir{Path: binTmpDir.GetPath()}, nil
+	})
+
 	for os, osTargets := range ctx.Cfg.Targets.GetOsArches() {
 		os := os
 		osCommonCfg := ctx.Cfg.Targets.GetOsCommonCfg(os)
@@ -32,9 +40,15 @@ func RegisterBuilders(ctx buildctx.Context) {
 					binFile = &fs_resource.TempFile{Path: binFilePath}
 				}
 
+				binTempDir, err := ctx.Artifacts.Get(ctx, buildctx.KindBinTempDir)
+				if err != nil {
+					return nil, err
+				}
+
 				buildCfg := config.Config{
 					XGoConfig:      ctx.Cfg.XGo,
 					RootPath:       ctx.Cfg.Root,
+					BinTempDir:     binTempDir.GetPath(),
 					MainPkgRelPath: ctx.Cfg.Src.MainPkg,
 					Targets: map[config.Target]config.TargetConfig{
 						config.Target{
