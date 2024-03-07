@@ -39,7 +39,7 @@ func Start(
 			Targets:    []string{target.String()},
 		}
 		//ctx.Artifacts.AddAnonymous(&resource.TempDir{Path: binTmpDir})
-		logger := logging.NewBufferedLogger(ctx.Logger)
+		logger := logging.NewBufferedLogger(ctx.Logger.WithPrefix(fmt.Sprintf("xgo-%s", target.String())))
 		err := xgolib.StartBuild(args, logger)
 		logger.Flush()
 		if err != nil {

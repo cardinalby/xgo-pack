@@ -45,6 +45,10 @@ xgo-pack build
 
 It will use `xgo-pack-config.yaml` file in the current directory to build and pack your application.
 
+## Check out the example
+
+Example tray icon app that is built for all supported platforms is available in the [example](./example) directory.
+
 ### Config details
 
 The config file is a yaml file. To see all available options use any modern IDE that supports json schema [available at

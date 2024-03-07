@@ -1,7 +1,5 @@
 package logging
 
-import "sync"
-
 type Logger interface {
 	Print(v ...any)
 	Printf(format string, v ...any)
@@ -11,5 +9,5 @@ type Logger interface {
 
 type SyncedLogger interface {
 	Logger
-	sync.Locker
+	AcquireLock() (logger Logger, unlock func())
 }

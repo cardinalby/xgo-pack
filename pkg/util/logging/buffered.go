@@ -56,13 +56,15 @@ func (l *BufferedLogger) Flush() {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
+	logger := l.logger
 	if syncedLogger, ok := l.logger.(SyncedLogger); ok {
-		syncedLogger.Lock()
-		defer syncedLogger.Unlock()
+		var unlock func()
+		logger, unlock = syncedLogger.AcquireLock()
+		defer unlock()
 	}
 
 	for _, call := range l.callsBuffer {
-		call(l.logger)
+		call(logger)
 	}
 	l.callsBuffer = nil
 }

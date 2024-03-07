@@ -42,15 +42,17 @@ func Start(
 			arch := arch
 			archCfg := archCfg
 			if archCfg.ShouldBuildBin() {
-				errGroup.Go(func() error {
-					if os == consts.OsWindows {
-						if _, err := buildCtx.Artifacts.Get(buildCtx, buildctx.WinSysoKind(arch)); err != nil {
-							return err
-						}
+				//errGroup.Go(func() error {
+				if os == consts.OsWindows {
+					if _, err := buildCtx.Artifacts.Get(buildCtx, buildctx.WinSysoKind(arch)); err != nil {
+						return err
 					}
-					_, err := buildCtx.Artifacts.Get(buildCtx, buildctx.BinKind(os, arch))
+				}
+				_, err := buildCtx.Artifacts.Get(buildCtx, buildctx.BinKind(os, arch))
+				if err != nil {
 					return err
-				})
+				}
+				//})
 			}
 			if macosArchCfg, ok := archCfg.(*cfgtypes.TargetMacosArch); ok {
 				if macosArchCfg.ShouldBuildBundle() {

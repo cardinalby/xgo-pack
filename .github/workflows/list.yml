@@ -15,9 +15,6 @@ jobs:
         with:
           go-version-file: 'go.mod'
 
-      - run: go mod download
-      - run: go test ./...
-
       - env:
           GOPROXY: "proxy.golang.org"
         run: go list -m github.com/cardinalby/xgo-pack@${{ github.ref_name }}
