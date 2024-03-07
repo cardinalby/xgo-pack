@@ -96,6 +96,10 @@ func (ds *Artifacts) Get(ctx Context, kind Kind) (Artifact, error) {
 	builtArtifact, ok := ds.built.Get(kind)
 	ds.mu.RUnlock()
 
+	if ctx.Err() != nil {
+		return nil, ctx.Err()
+	}
+
 	if ok {
 		builtArtifact.mu.RLock()
 		defer builtArtifact.mu.RUnlock()
@@ -103,6 +107,11 @@ func (ds *Artifacts) Get(ctx Context, kind Kind) (Artifact, error) {
 	}
 
 	ds.mu.Lock()
+
+	if ctx.Err() != nil {
+		ds.mu.Unlock()
+		return nil, ctx.Err()
+	}
 
 	// repeat the check after acquiring the lock (in case it was added while we were waiting for the lock)
 	builtArtifact, ok = ds.built.Get(kind)

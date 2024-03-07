@@ -18,4 +18,4 @@ jobs:
 
       - run: go mod download
       - run: go test ./...
-      - run: cd example && bash build.sh
+      - run: cd example && go mod download && bash build.sh
