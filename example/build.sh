@@ -6,4 +6,5 @@
 cd ../
 go build .
 cd example
+go mod download
 ../xgo-pack build
