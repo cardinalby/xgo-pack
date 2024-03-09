@@ -5,6 +5,6 @@
 
 cd ../
 go build .
-cd example
+cd example || exit 1
 go mod download
 ../xgo-pack build

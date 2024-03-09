@@ -57,7 +57,7 @@ func getGoFilePackageName(filePath string) (string, error) {
 		return "", err
 	}
 	fSet := token.NewFileSet()
-	f, err := parser.ParseFile(fSet, filepath.Base(filePath), data, parser.PackageClauseOnly)
+	f, err := parser.ParseFile(fSet, filePath, data, parser.PackageClauseOnly)
 	if err != nil {
 		return "", fmt.Errorf("error parsing go file: %w", err)
 	}

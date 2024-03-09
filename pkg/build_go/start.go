@@ -3,7 +3,6 @@ package build_go
 import (
 	"fmt"
 	"path"
-	"path/filepath"
 
 	xgolib "github.com/cardinalby/xgo-as-library"
 	"github.com/cardinalby/xgo-pack/pkg/build_go/config"
@@ -18,7 +17,7 @@ func Start(
 	ctx buildctx.Context,
 	config config.Config,
 ) error {
-	outBinPrefix := filepath.Base(config.MainPkgRelPath)
+	outBinPrefix := ctx.Cfg.Targets.Common.BinName
 
 	for target, tConfig := range config.Targets {
 		buildArgs := xgolib.BuildArgs{

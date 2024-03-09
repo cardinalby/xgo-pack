@@ -94,7 +94,11 @@ func FillDefaults(c *cfgtypes.Config) (err error) {
 	}
 
 	if c.Targets.Common.BinName == "" {
-		c.Targets.Common.BinName = filepath.Base(c.Src.MainPkg)
+		mainPkgAbsPath, err := filepath.Abs(filepath.Join(c.Root, c.Src.MainPkg))
+		if err != nil {
+			return fmt.Errorf("error getting absolute path for main package '%s': %w", c.Src.MainPkg, err)
+		}
+		c.Targets.Common.BinName = filepath.Base(mainPkgAbsPath)
 	}
 
 	if c.Targets.Common.HighDpi == nil {
