@@ -2,7 +2,6 @@ package build_go
 
 import (
 	"fmt"
-	"os"
 	"path"
 
 	xgolib "github.com/cardinalby/xgo-as-library"
@@ -11,7 +10,6 @@ import (
 	"github.com/cardinalby/xgo-pack/pkg/pipeline/buildctx"
 	fsutil "github.com/cardinalby/xgo-pack/pkg/util/fs"
 	"github.com/cardinalby/xgo-pack/pkg/util/logging"
-	osutil "github.com/cardinalby/xgo-pack/pkg/util/os"
 	typeutil "github.com/cardinalby/xgo-pack/pkg/util/type"
 )
 
@@ -49,17 +47,7 @@ func Start(
 
 		outBinPath := getXgoOutBinPath(config.BinTempDir, outBinPrefix, target)
 
-		uid, gid, ok, err := osutil.GetLinuxUser()
-		if err != nil {
-			return err
-		}
-		if ok {
-			if err := os.Chown(outBinPath, uid, gid); err != nil {
-				return fmt.Errorf("error changing owner of xgo build result bin '%s': %w", outBinPath, err)
-			}
-		}
-
-		if err := fsutil.RenameFile(outBinPath, tConfig.OutBinPath); err != nil {
+		if err := fsutil.RenameOrCopyFile(outBinPath, tConfig.OutBinPath, ctx.Logger); err != nil {
 			return fmt.Errorf(
 				"error moving xgo build result bin '%s' to '%s': %w. It may be a result of unsuccessful build",
 				outBinPath, tConfig.OutBinPath, err,
