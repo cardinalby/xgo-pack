@@ -8,7 +8,7 @@ require (
 	github.com/akavel/rsrc v0.10.2
 	github.com/cardinalby/go-dto-merge v1.0.1
 	github.com/cardinalby/go-struct-flags v1.1.0
-	github.com/cardinalby/xgo-as-library v1.1.3
+	github.com/cardinalby/xgo-as-library v1.1.4
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/goccy/go-yaml v1.11.3
 	github.com/goreleaser/nfpm/v2 v2.35.3
