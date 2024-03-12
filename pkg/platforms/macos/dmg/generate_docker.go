@@ -60,7 +60,7 @@ func dockerCreateDmg(
 		return fmt.Errorf("error getting absolute path for out dmg dir '%s': %w", outDmgPathDir, err)
 	}
 
-	return docker.RunOnce(ctx, imgName, docker.RunOptions{
+	stdout, err := docker.RunOnceRes(ctx, imgName, docker.RunOptions{
 		Volumes: map[string]string{
 			srcBundlePathAbs: internalSrcBundlePath,
 			outDmgDirPathAbs: internalDstDir,
@@ -68,4 +68,9 @@ func dockerCreateDmg(
 		Env:  env,
 		Args: []string{appName, internalSrcPath, path.Join(internalDstDir, filepath.Base(outDmgPath))},
 	})
+	if err != nil {
+		return fmt.Errorf("error running create-dmg docker container: %w. %s", err, stdout)
+	}
+	ctx.Logger.Printf(stdout)
+	return nil
 }

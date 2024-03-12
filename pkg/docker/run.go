@@ -22,6 +22,14 @@ func RunOnce(ctx context.Context, image string, options RunOptions) error {
 	return Exec(ctx, args...)
 }
 
+func RunOnceRes(ctx context.Context, image string, options RunOptions) (stdout string, err error) {
+	args, err := prepareRunArgs(image, options)
+	if err != nil {
+		return "", err
+	}
+	return ExecRes(ctx, args...)
+}
+
 func prepareRunArgs(image string, options RunOptions) ([]string, error) {
 	if options.User == "" {
 		usr, err := user.Current()

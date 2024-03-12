@@ -309,7 +309,7 @@
         },
         "add_applications_symlink": {
           "type": "boolean",
-          "description": "AddApplicationsSymlink is a flag to add a symlink to the /Applications folder in the dmg"
+          "description": "AddApplicationsSymlink is a flag to add a symlink to the /Applications folder in the dmg\nIf not set, true will be used"
         }
       },
       "additionalProperties": false,

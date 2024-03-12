@@ -21,6 +21,7 @@ type TargetMacosCommonDmg struct {
 	// If empty, "[targets.common.product_name].dmg" will be used
 	DmgName string `json:"dmg_name,omitempty"`
 	// AddApplicationsSymlink is a flag to add a symlink to the /Applications folder in the dmg
+	// If not set, true will be used
 	AddApplicationsSymlink *bool `json:"add_applications_symlink,omitempty"`
 }
 
