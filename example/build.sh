@@ -1,10 +1,10 @@
 #!/bin/bash
 
-#go install github.com/cardinalby/xgo-pack@latest
-#xgo-pack build
+# Normally, you would install it via:
+# go install github.com/cardinalby/xgo-pack@latest
+# Build locally to test the current version
+(cd ../ && go build -o .)
+alias xgo-pack=../xgo-pack
 
-cd ../
-go build .
-cd example || exit 1
 go mod download
 ../xgo-pack build

@@ -2,6 +2,8 @@ module github.com/cardinalby/xgo-pack/example
 
 go 1.21.6
 
+replace github.com/cardinalby/xgo-pack@latest => ../
+
 require fyne.io/systray v1.10.0
 
 require (
