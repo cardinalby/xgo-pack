@@ -10,13 +10,13 @@ jobs:
   list:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
 
-      - run: cd example & bash build.sh
+      - run: cd example && bash build.sh
 
       - name: Create a Release
         id: create_release
@@ -31,7 +31,7 @@ jobs:
           asset_content_type: application/vnd.microsoft.portable-executable
 
       - name: Pack MacOS amd64 bundle
-        run: cd example/dist/darwin_amd64 & zip -r -q example.app.zip example.app
+        run: cd example/dist/darwin_amd64 && zip -r -q example.app.zip example.app
 
       - name: Upload MacOS amd64 app bundle
         uses: shogo82148/actions-upload-release-asset@v1
@@ -48,7 +48,7 @@ jobs:
           asset_name: example_MacOS_intel.dmg
 
       - name: Pack MacOS arm64 bundle
-        run: cd example/dist/darwin_arm64 & zip -r -q example.app.zip example.app
+        run: cd example/dist/darwin_arm64 && zip -r -q example.app.zip example.app
 
       - name: Upload MacOS arm64 app bundle
         uses: shogo82148/actions-upload-release-asset@v1
