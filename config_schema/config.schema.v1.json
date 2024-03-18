@@ -276,6 +276,9 @@
           "type": "string",
           "description": "The name of the resulting binary file. For Windows '.exe' extension will be added automatically\nIf not set, the last part of the main package path will be used"
         },
+        "codesign": {
+          "$ref": "#/$defs/TargetMacosCommonCodesign"
+        },
         "bundle": {
           "$ref": "#/$defs/TargetMacosCommonBundle"
         },
@@ -300,6 +303,17 @@
       "additionalProperties": false,
       "type": "object",
       "description": "TargetMacosCommonBundle is an arches common settings for MacOS bundle"
+    },
+    "TargetMacosCommonCodesign": {
+      "properties": {
+        "sign": {
+          "type": "boolean",
+          "description": "Use codesign tool to sign a binary and a bundle. Default is true.\nBy default, self-signed certificate will be used.\nrcodesign.toml in root dir can be used to configure custom options."
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "description": "TargetMacosCommonCodesign is options for rcodesign tool run against binary and bundle"
     },
     "TargetMacosCommonDmg": {
       "properties": {
