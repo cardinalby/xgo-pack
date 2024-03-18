@@ -7,6 +7,7 @@ import (
 
 	"github.com/cardinalby/xgo-pack/pkg/consts"
 	"github.com/cardinalby/xgo-pack/pkg/pipeline/buildctx"
+	"github.com/cardinalby/xgo-pack/pkg/platforms/macos/codesign"
 	"github.com/cardinalby/xgo-pack/pkg/platforms/macos/iconset"
 	"github.com/cardinalby/xgo-pack/pkg/platforms/macos/plist"
 	fsutil "github.com/cardinalby/xgo-pack/pkg/util/fs"
@@ -133,6 +134,12 @@ func RegisterBuilders(ctx buildctx.Context) {
 
 			if err := fsutil.CopyFile(plistFile.GetPath(), outBundlePath.GetPlistPath()); err != nil {
 				return nil, err
+			}
+
+			if typeutil.PtrValueOrDefault(ctx.Cfg.Targets.Macos.Common.Codesign.Sign) {
+				if err := codesign.SignArtifact(ctx, string(outBundlePath)); err != nil {
+					return nil, err
+				}
 			}
 
 			return bundleDir, nil

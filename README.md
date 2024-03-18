@@ -13,8 +13,8 @@ an application for any supported platform and from any platform. **The only depe
 ## Supported targets
 
 - MacOS: **amd64/arm64**
-  - binary
-  - app bundle (with icon)
+  - binary (+signing)
+  - app bundle with icon (+signing)
   - dmg image with app bundle
 - Windows: **amd64**
   - binary (with embed manifest + icon)
@@ -86,4 +86,11 @@ Templates are applied in the order they are listed. The last template has the hi
 #### Icon
 Icon is converted to the target formats using [ImageMagick](https://github.com/dooman87/imagemagick-docker). 
 You can use src icon of any supported format. For psd files add `[0]` at the end to merge all layers
+
+#### MacOS signing
+[rcodesign](https://github.com/indygreg/apple-platform-rs) tool in docker is used for signing MacOS binaries and 
+app bundles. By default, it signs them with self-signed certificate. 
+To set up proper signing, add `rcodesign.toml` 
+[config file](https://gregoryszorc.com/docs/apple-codesign/0.27.0/apple_codesign_rcodesign_config_files.html) 
+to the root of your project.  
 

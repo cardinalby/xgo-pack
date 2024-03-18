@@ -7,9 +7,10 @@ import (
 )
 
 type RunOptions struct {
-	Volumes map[string]string
-	Env     map[string]string
-	Args    []string
+	WorkingDir string
+	Volumes    map[string]string
+	Env        map[string]string
+	Args       []string
 	// If not empty, sets uid/gid of the user inside the container. Otherwise, the user is the current user.
 	User string
 }
@@ -46,6 +47,9 @@ func prepareRunArgs(image string, options RunOptions) ([]string, error) {
 		args = append(args, "-e", fmt.Sprintf(`%s=%s`, key, value))
 	}
 	args = append(args, "--user", options.User)
+	if options.WorkingDir != "" {
+		args = append(args, "-w", options.WorkingDir)
+	}
 	args = append(args, image)
 	args = append(args, options.Args...)
 

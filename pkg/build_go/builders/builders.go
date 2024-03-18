@@ -7,6 +7,7 @@ import (
 	"github.com/cardinalby/xgo-pack/pkg/build_go/config"
 	"github.com/cardinalby/xgo-pack/pkg/consts"
 	"github.com/cardinalby/xgo-pack/pkg/pipeline/buildctx"
+	"github.com/cardinalby/xgo-pack/pkg/platforms/macos/codesign"
 	"github.com/cardinalby/xgo-pack/pkg/util/fs/fs_resource"
 )
 
@@ -76,6 +77,12 @@ func RegisterBuilders(ctx buildctx.Context) {
 
 					if err := build_go.Start(ctx, buildCfg); err != nil {
 						return nil, err
+					}
+
+					if os == consts.OsDarwin {
+						if err := codesign.SignArtifact(ctx, binFile.GetPath()); err != nil {
+							return nil, err
+						}
 					}
 
 					return binFile, nil

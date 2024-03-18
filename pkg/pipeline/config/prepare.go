@@ -117,6 +117,10 @@ func FillDefaults(c *cfgtypes.Config) (err error) {
 		}
 	}
 
+	if c.Targets.Macos.Common.Codesign.Sign == nil {
+		c.Targets.Macos.Common.Codesign.Sign = typeutil.Ptr(true)
+	}
+
 	if c.Targets.Macos.Common.Bundle.HideInDock == nil {
 		c.Targets.Macos.Common.Bundle.HideInDock = typeutil.Ptr(false)
 	}

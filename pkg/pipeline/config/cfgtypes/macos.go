@@ -25,10 +25,19 @@ type TargetMacosCommonDmg struct {
 	AddApplicationsSymlink *bool `json:"add_applications_symlink,omitempty"`
 }
 
+// TargetMacosCommonCodesign is options for rcodesign tool run against binary and bundle
+type TargetMacosCommonCodesign struct {
+	// Use codesign tool to sign a binary and a bundle. Default is true.
+	// By default, self-signed certificate will be used.
+	// rcodesign.toml in root dir can be used to configure custom options.
+	Sign *bool `json:"sign,omitempty"`
+}
+
 type TargetMacosCommon struct {
 	TargetsCommon `json:",inline"`
-	Bundle        TargetMacosCommonBundle `json:"bundle,omitempty"`
-	Dmg           TargetMacosCommonDmg    `json:"dmg,omitempty"`
+	Codesign      TargetMacosCommonCodesign `json:"codesign,omitempty"`
+	Bundle        TargetMacosCommonBundle   `json:"bundle,omitempty"`
+	Dmg           TargetMacosCommonDmg      `json:"dmg,omitempty"`
 }
 
 type TargetMacosArch struct {

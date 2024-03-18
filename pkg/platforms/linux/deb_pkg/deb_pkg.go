@@ -33,12 +33,12 @@ func RegisterDebPkgBuilders(ctx buildctx.Context) {
 
 			srcIcon, err := ctx.Artifacts.Get(ctx, buildctx.KindPngIcon)
 			if err != nil {
-				ctx.Logger.Printf("error getting png icon: %v", err)
+				return nil, fmt.Errorf("error getting png icon: %w", err)
 			}
 
 			srcDesktopEntry, err := ctx.Artifacts.Get(ctx, buildctx.KindLinuxDesktopEntry)
 			if err != nil {
-				ctx.Logger.Printf("error getting desktop entry: %v", err)
+				return nil, fmt.Errorf("error getting desktop entry: %w", err)
 			}
 
 			if err := BuildDebPkg(
