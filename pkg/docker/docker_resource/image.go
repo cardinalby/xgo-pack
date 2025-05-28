@@ -18,7 +18,7 @@ func NewTempImage(imageID string) *TempImage {
 }
 
 func (t *TempImage) Dispose() error {
-	if !t.IsDisposed {
+	if t != nil && !t.IsDisposed {
 		return docker.RemoveImage(context.Background(), t.ImageID)
 	}
 	return nil

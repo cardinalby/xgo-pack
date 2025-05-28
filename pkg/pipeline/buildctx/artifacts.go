@@ -142,6 +142,7 @@ func (ds *Artifacts) Get(ctx Context, kind Kind) (Artifact, error) {
 		entry.err = fmt.Errorf("error building artifact for kind %s: %w", kind, entry.err)
 	}
 	entry.mu.Unlock()
+	ds.logger.Printf("--------------- %s is done -------------\n", kind)
 
 	return entry.result, entry.err
 }

@@ -196,10 +196,6 @@
           "type": "string",
           "description": "Desktop entry type. If empty, \"Application\" will be used"
         },
-        "mime_type": {
-          "type": "string",
-          "description": "Desktop entry mime type."
-        },
         "terminal": {
           "type": "boolean",
           "description": "Desktop entry Terminal key.\nIf empty, `true` will be used"
@@ -207,6 +203,10 @@
         "no_display": {
           "type": "boolean",
           "description": "Desktop entry NoDisplay key.\nIf empty, `false` will be used"
+        },
+        "mime_type": {
+          "type": "string",
+          "description": "Desktop entry mime type."
         }
       },
       "additionalProperties": false,
