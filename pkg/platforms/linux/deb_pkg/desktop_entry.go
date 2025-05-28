@@ -17,6 +17,7 @@ type DesktopEntry struct {
 	Terminal  bool
 	Icon      string
 	NoDisplay bool
+	MimeType  string
 }
 
 func (d *DesktopEntry) Marshall() []byte {
@@ -28,6 +29,9 @@ func (d *DesktopEntry) Marshall() []byte {
 	sb.WriteString("Terminal=" + strconv.FormatBool(d.Terminal) + "\n")
 	sb.WriteString("Icon=" + d.Icon + "\n")
 	sb.WriteString("NoDisplay=" + strconv.FormatBool(d.NoDisplay) + "\n")
+	if d.MimeType != "" {
+		sb.WriteString("MimeType=" + d.MimeType + "\n")
+	}
 	return []byte(sb.String())
 }
 
@@ -45,6 +49,7 @@ func registerDesktopEntryBuilder(ctx buildctx.Context) {
 			Terminal:  typeutil.PtrValueOr(ctx.Cfg.Targets.Linux.Common.Deb.DesktopEntry.Terminal, true),
 			Icon:      ctx.Cfg.Targets.Linux.Common.Deb.DesktopEntry.DstIconPath,
 			NoDisplay: typeutil.PtrValueOrDefault(ctx.Cfg.Targets.Linux.Common.Deb.DesktopEntry.NoDisplay),
+			MimeType:  ctx.Cfg.Targets.Linux.Common.Deb.DesktopEntry.MimeType,
 		}
 		if err := fsutil.WriteFile(file.Path, entry.Marshall()); err != nil {
 			return nil, fmt.Errorf("error writing '%s' file: %w", file.Path, err)

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cardinalby/go-dto-merge"
+	dtomerge "github.com/cardinalby/go-dto-merge"
 	"github.com/cardinalby/xgo-pack/pkg/go_src"
 	"github.com/cardinalby/xgo-pack/pkg/pipeline/config/cfgtypes"
 	"github.com/cardinalby/xgo-pack/pkg/pipeline/config/presets"
@@ -180,7 +180,6 @@ func FillDefaults(c *cfgtypes.Config) (err error) {
 	if c.Targets.Linux.Common.Deb.DesktopEntry.NoDisplay == nil {
 		c.Targets.Linux.Common.Deb.DesktopEntry.NoDisplay = typeutil.Ptr(false)
 	}
-
 	return nil
 }
 

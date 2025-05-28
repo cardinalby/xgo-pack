@@ -25,6 +25,8 @@ type TargetLinuxDebDesktopEntry struct {
 	// Desktop entry NoDisplay key.
 	// If empty, `false` will be used
 	NoDisplay *bool `json:"no_display,omitempty"`
+	// Desktop entry mime type.
+	MimeType string `json:"mime_type,omitempty"`
 }
 
 type TargetLinuxDeb struct {
