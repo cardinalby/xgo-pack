@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/cardinalby/xgo-pack/pkg/consts"
 	"github.com/cardinalby/xgo-pack/pkg/pipeline/buildctx"
@@ -119,10 +120,20 @@ func getNfpmConfig(
 		return cfg, nil
 	}
 
+	// dst_bin_path: /usr/bin/foo %F ~> /usr/bin/foo
+	DstBinPath := strings.Split(debCfg.DstBinPath, "%")[0]
+	DstBinPath = strings.TrimSpace(DstBinPath)
+	if filepath.Base(DstBinPath) == DstBinPath {
+		// dst_bin_path: bar ~> /usr/bin/bar
+		DstBinPath = filepath.Join(
+			"/usr/bin/",
+			DstBinPath,
+		)
+	}
 	contents := files.Contents{
 		{
 			Source:      srcBinPath,
-			Destination: debCfg.DstBinPath,
+			Destination: DstBinPath,
 		},
 		{
 			Source: srcDesktopEntryPath,
@@ -132,7 +143,10 @@ func getNfpmConfig(
 			),
 		},
 	}
-	if srcIconPath != "" {
+	if srcIconPath != "" &&
+		// dst_icon_path: edit-find-replace
+		// do not append Standard Icon Names https://specifications.freedesktop.org/icon-naming-spec/latest/#names
+		filepath.Base(debCfg.DesktopEntry.DstIconPath) != debCfg.DesktopEntry.DstIconPath {
 		contents = append(contents, &files.Content{
 			Source:      srcIconPath,
 			Destination: debCfg.DesktopEntry.DstIconPath,
