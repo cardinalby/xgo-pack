@@ -5,20 +5,11 @@ import (
 
 	"github.com/cardinalby/xgo-pack/pkg/pipeline/buildctx"
 	"github.com/cardinalby/xgo-pack/pkg/platforms/macos/dmg"
-	"github.com/cardinalby/xgo-pack/pkg/platforms/macos/dmg/docker_img"
 	"github.com/cardinalby/xgo-pack/pkg/util/fs/fs_resource"
 	typeutil "github.com/cardinalby/xgo-pack/pkg/util/type"
 )
 
 func RegisterBuilders(ctx buildctx.Context) {
-
-	ctx.Artifacts.RegisterBuilder(
-		buildctx.KindMacosCreateDmgDockerImage,
-		func(ctx buildctx.Context) (buildctx.Artifact, error) {
-			return docker_img.BuildCreateDmgDockerImage(ctx)
-		},
-	)
-
 	for arch, archCfg := range ctx.Cfg.Targets.Macos.GetArches() {
 		arch := arch
 		archCfg := archCfg

@@ -10,30 +10,10 @@ import (
 )
 
 // image that doesn't support creating "Applications" symlink
-const originalCreateDmgDockerImage = "sporsh/create-dmg"
+const createDmgDockerImage = "ghcr.io/cardinalby/create-dmg:latest"
 
 func Generate(
 	ctx buildctx.Context,
-	srcBundle string,
-	outDmgPath string,
-	appName string,
-	addApplicationsSymlink bool,
-) error {
-	dockerImageName := originalCreateDmgDockerImage
-	if addApplicationsSymlink {
-		createDmgDockerImage, err := ctx.Artifacts.Get(ctx, buildctx.KindMacosCreateDmgDockerImage)
-		if err != nil {
-			return fmt.Errorf("error getting local create-dmg docker image: %w", err)
-		}
-		dockerImageName = createDmgDockerImage.GetPath()
-	}
-
-	return dockerCreateDmg(ctx, dockerImageName, srcBundle, outDmgPath, appName, addApplicationsSymlink)
-}
-
-func dockerCreateDmg(
-	ctx buildctx.Context,
-	imgName string,
 	srcBundlePath string,
 	outDmgPath string,
 	appName string,
@@ -60,7 +40,7 @@ func dockerCreateDmg(
 		return fmt.Errorf("error getting absolute path for out dmg dir '%s': %w", outDmgPathDir, err)
 	}
 
-	stdout, err := docker.RunOnceRes(ctx, imgName, docker.RunOptions{
+	stdout, err := docker.RunOnceRes(ctx, createDmgDockerImage, docker.RunOptions{
 		Volumes: map[string]string{
 			srcBundlePathAbs: internalSrcBundlePath,
 			outDmgDirPathAbs: internalDstDir,

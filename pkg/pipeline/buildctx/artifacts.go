@@ -22,16 +22,15 @@ type DisposableArtifact interface {
 type Kind string
 
 const (
-	KindBinTempDir                Kind = "bin_temp_dir"
-	KindIcon                      Kind = "icon"
-	KindDefaultPngIcon            Kind = "default_png_icon"
-	KindPngIcon                   Kind = "png_icon"
-	KindIcoIcon                   Kind = "ico_icon"
-	KindWinManifest               Kind = "win_manifest"
-	KindMacosPlist                Kind = "macos_plist"
-	KindMacosIconSet              Kind = "macos_icon_set"
-	KindLinuxDesktopEntry         Kind = "linux_desktop_entry"
-	KindMacosCreateDmgDockerImage Kind = "macos_create_dmg_docker_image"
+	KindBinTempDir        Kind = "bin_temp_dir"
+	KindIcon              Kind = "icon"
+	KindDefaultPngIcon    Kind = "default_png_icon"
+	KindPngIcon           Kind = "png_icon"
+	KindIcoIcon           Kind = "ico_icon"
+	KindWinManifest       Kind = "win_manifest"
+	KindMacosPlist        Kind = "macos_plist"
+	KindMacosIconSet      Kind = "macos_icon_set"
+	KindLinuxDesktopEntry Kind = "linux_desktop_entry"
 )
 
 func WinSysoKind(arch consts.Arch) Kind {
